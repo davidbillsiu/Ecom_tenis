@@ -4,12 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="./css/style.css">
+    <script src="./js/index.js" defer></script>
     <title>Loja Tênis</title>
 </head>
 <body>
     <header>
         <nav>
             <a href="./index.html">Home</a>&emsp;&emsp;
+            <span class="titulo_menu">Autenticação</span>&emsp;
+            <a href="./html/login.html">Login</a>&emsp;
+            <span id="verificar_log"></span>
+            <br><br><hr><br>
+
             <span class="titulo_menu">Usuários</span>&emsp;
             <a href="./html/usuario_cadastrar.html">Cadastrar</a>&emsp;
             <a href="./html/usuario_listar.html">Listar</a>&emsp;
@@ -38,6 +44,8 @@
         <h1>Painel de Controle - E-commerce de Tênis</h1>
         <br><br>
         <h2>Controle de Usuário, Produtos, Movimento de Produtos e Relatórios</h2>
+        <br><br>
+        <h2 id="aviso_login"></h2>
     </main>
 </body>
 </html>

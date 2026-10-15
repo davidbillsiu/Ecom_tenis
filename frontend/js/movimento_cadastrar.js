@@ -1,3 +1,5 @@
+exigirLogin()
+
 let resposta = document.getElementById('resposta')
 let btn_cadastrar = document.getElementById('btn_cadastrar')
 
@@ -18,7 +20,7 @@ btn_cadastrar.addEventListener('click', (e) => {
         data: data
     }
 
-    fetch('http://localhost:3000/movimento', {
+    fetchAuth('http://localhost:3000/movimento', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'

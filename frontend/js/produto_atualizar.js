@@ -1,4 +1,6 @@
-let respuesta = document.getElementById('resposta')
+exigirLogin()
+
+let resposta = document.getElementById('resposta')
 let btn_atualizar = document.getElementById('btn_atualizar')
 
 btn_atualizar.addEventListener('click', (e) => {
@@ -24,7 +26,7 @@ btn_atualizar.addEventListener('click', (e) => {
         precoUnit: precoUnit
     }
 
-    fetch(`http://localhost:3000/produto/${codProduto}`, {
+    fetchAuth(`http://localhost:3000/produto/${codProduto}`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json'

@@ -1,8 +1,35 @@
 ### - testes da API - o REST Client
+### Ordem: 1) cadastrar usuários  2) fazer o login (guarda o token)  3) testar as rotas privadas
 
-### - Teste se o servidor está funcionando
+### - Teste se o servidor está funcionando (rota privada: precisa do token)
 GET http://localhost:3000/
+Authorization: {{loginReq.response.body.token}}
+
+################################
+### USUÁRIO - CADASTRO (rota pública)
+
+### - Teste para Cadastrar o Usuário com CPF inválido (deve dar erro 400)
+POST http://localhost:3000/usuario
 Content-Type: application/json
+
+{
+    "nome": "Adalberto",
+    "email": "adalberto@gmail.com",
+    "senha": "123",
+    "cpf": "123456789",
+    "telefone": "47912345678"
+}
+
+### - Teste para Cadastrar o Usuário sem telefone (deve dar erro 400)
+POST http://localhost:3000/usuario
+Content-Type: application/json
+
+{
+    "nome": "Adalberto",
+    "email": "adalberto@gmail.com",
+    "senha": "123",
+    "cpf": "12345678912"
+}
 
 ### - Teste para Cadastrar o Usuário
 POST http://localhost:3000/usuario
@@ -11,7 +38,9 @@ Content-Type: application/json
 {
     "nome": "Adalberto",
     "email": "adalberto@gmail.com",
-    "senha": "123"
+    "senha": "123",
+    "cpf": "12345678912",
+    "telefone": "47912345678"
 }
 
 ### - Teste para Cadastrar o Usuário
@@ -21,7 +50,9 @@ Content-Type: application/json
 {
     "nome": "Marcos",
     "email": "marcos@gmail.com",
-    "senha": "123"
+    "senha": "123",
+    "cpf": "98765432100",
+    "telefone": "47988887777"
 }
 
 ### - Teste para Cadastrar o Usuário
@@ -31,44 +62,112 @@ Content-Type: application/json
 {
     "nome": "Ronaldo",
     "email": "ronaldo@gmail.com",
+    "senha": "123",
+    "cpf": "11122233344",
+    "telefone": "47955554444"
+}
+
+### - Teste para Cadastrar e-mail repetido (deve dar erro 409)
+POST http://localhost:3000/usuario
+Content-Type: application/json
+
+{
+    "nome": "Outro Marcos",
+    "email": "marcos@gmail.com",
+    "senha": "123",
+    "cpf": "98765432100",
+    "telefone": "47988887777"
+}
+
+################################
+### LOGIN (rota pública)
+
+### - Login sem preencher a senha (deve dar erro 400)
+POST http://localhost:3000/login
+Content-Type: application/json
+
+{
+    "email": "adalberto@gmail.com"
+}
+
+### - Login com e-mail que não existe (deve dar erro 404)
+POST http://localhost:3000/login
+Content-Type: application/json
+
+{
+    "email": "naoexiste@gmail.com",
     "senha": "123"
 }
 
+### - Login com senha errada (deve dar erro 401)
+POST http://localhost:3000/login
+Content-Type: application/json
 
-### - Teste para Listar o Usuário
+{
+    "email": "adalberto@gmail.com",
+    "senha": "errada"
+}
 
+### - Fazer Login do usuário (armazena o token automaticamente - válido por 1,5 hora)
+# @name loginReq
+POST http://localhost:3000/login
+Content-Type: application/json
+
+{
+    "email": "adalberto@gmail.com",
+    "senha": "123"
+}
+
+################################
+### ROTAS PRIVADAS - sem token (deve dar erro 401)
+
+### - Listar usuários SEM token
 GET http://localhost:3000/usuarios
 Content-Type: application/json
+
+################################
+### USUÁRIO - rotas privadas (precisam do token)
+
+### - Teste para Listar o Usuário
+GET http://localhost:3000/usuarios
+Content-Type: application/json
+Authorization: {{loginReq.response.body.token}}
 
 ### - Teste para Consultar o Usuário
 GET http://localhost:3000/usuario/1
 Content-Type: application/json
-
+Authorization: {{loginReq.response.body.token}}
 
 ### - Teste para Consultar o Usuário por nome
-GET http://localhost:3000/usuario/buscar/marcos
+GET http://localhost:3000/usuario/buscar/Marcos
 Content-Type: application/json
+Authorization: {{loginReq.response.body.token}}
 
-### - Teste para Excluir o Usuário
-DELETE http://localhost:3000/usuario/4
+### - Teste para Atualizar o Usuário (senha e cpf são criptografados de novo)
+PUT http://localhost:3000/usuario/3
 Content-Type: application/json
-
-### - Teste para Atualizar o Usuário
-PUT http://localhost:3000/usuario/5
-Content-Type: application/json
+Authorization: {{loginReq.response.body.token}}
 
 {
     "nome": "Rodrigo",
     "email": "rodrigo@gmail.com",
-    "senha": "456"
+    "senha": "456",
+    "cpf": "55566677788",
+    "telefone": "47900001111"
 }
 
+### - Teste para Excluir o Usuário
+DELETE http://localhost:3000/usuario/3
+Content-Type: application/json
+Authorization: {{loginReq.response.body.token}}
 
 ################################
+### PRODUTO - rotas privadas
 
 ### - Teste para Cadastrar o Produto
 POST http://localhost:3000/produto
 Content-Type: application/json
+Authorization: {{loginReq.response.body.token}}
 
 {
     "nome": "Nike",
@@ -81,6 +180,7 @@ Content-Type: application/json
 ### - Teste para Cadastrar o Produto
 POST http://localhost:3000/produto
 Content-Type: application/json
+Authorization: {{loginReq.response.body.token}}
 
 {
     "nome": "Ultraboost",
@@ -93,6 +193,7 @@ Content-Type: application/json
 ### - Teste para Cadastrar o Produto
 POST http://localhost:3000/produto
 Content-Type: application/json
+Authorization: {{loginReq.response.body.token}}
 
 {
     "nome": "Old Skool Pro",
@@ -103,26 +204,29 @@ Content-Type: application/json
 }
 
 ### - Teste para Listar o Produto
-
 GET http://localhost:3000/produtos
 Content-Type: application/json
+Authorization: {{loginReq.response.body.token}}
 
 ### - Teste para Consultar o Produto
 GET http://localhost:3000/produto/1
 Content-Type: application/json
-
+Authorization: {{loginReq.response.body.token}}
 
 ### - Teste para Consultar o Produto por nome
 GET http://localhost:3000/produto/buscar/Nike
 Content-Type: application/json
+Authorization: {{loginReq.response.body.token}}
 
 ### - Teste para Excluir o Produto
 DELETE http://localhost:3000/produto/4
 Content-Type: application/json
+Authorization: {{loginReq.response.body.token}}
 
 ### - Teste para Atualizar o Produto
 PUT http://localhost:3000/produto/3
 Content-Type: application/json
+Authorization: {{loginReq.response.body.token}}
 
 {
     "nome": "Adidas",
@@ -132,12 +236,13 @@ Content-Type: application/json
     "precoUnit": 550.00
 }
 
+################################
+### MOVIMENTO - rotas privadas
 
-#####################################
 ### - Teste para Cadastrar Movimento
-
 POST http://localhost:3000/movimento
 Content-Type: application/json
+Authorization: {{loginReq.response.body.token}}
 
 {
     "idUsuario": 1,
@@ -148,19 +253,16 @@ Content-Type: application/json
 }
 
 ### - Teste para Listar o Movimento
-
 GET http://localhost:3000/movimentos
 Content-Type: application/json
+Authorization: {{loginReq.response.body.token}}
 
 ### - Teste para Listar valor total por categoria (view)
-
 GET http://localhost:3000/relatorio/categorias
 Content-Type: application/json
-
+Authorization: {{loginReq.response.body.token}}
 
 ### - Teste para Listar histórico de saídas (view)
-
 GET http://localhost:3000/relatorio/saidas
 Content-Type: application/json
-
-
+Authorization: {{loginReq.response.body.token}}
